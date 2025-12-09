@@ -1,0 +1,35 @@
+Huffman Encoding Report (Character-Level)
+Original Text Length: 101 tokens
+Symbol Table:
+Symbol | Frequency | Huffman Code | Bits Used
+============================================================
+s          | 9          | 000        | 27
+n          | 5          | 0010       | 20
+i          | 5          | 0011       | 20
+p          | 1          | 010000     | 6
+H          | 1          | 010001     | 6
+f          | 3          | 01001      | 15
+c          | 5          | 0101       | 20
+h          | 3          | 01100      | 15
+l          | 1          | 011010     | 6
+.          | 2          | 011011     | 12
+g          | 3          | 01110      | 15
+d          | 3          | 01111      | 15
+' '        | 14         | 100        | 42
+e          | 7          | 1010       | 28
+t          | 7          | 1011       | 28
+r          | 8          | 1100       | 32
+u          | 2          | 110100     | 12
+q          | 1          | 1101010    | 7
+I          | 1          | 1101011    | 7
+m          | 4          | 11011      | 20
+a          | 8          | 1110       | 32
+o          | 8          | 1111       | 32
+
+============================================================
+Original size (bits): 808
+Compressed size (bits): 417
+Compression ratio: 48.39%
+Unique symbols: 22
+Most frequent symbol: ' ' (14 times)
+Least frequent symbol: 'H' (1 times)

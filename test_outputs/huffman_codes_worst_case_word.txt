@@ -1,0 +1,33 @@
+Huffman Encoding Report (Word-Level)
+Original Text Length: 20 tokens
+Symbol Table:
+Symbol | Frequency | Huffman Code | Bits Used
+============================================================
+huffman    | 1          | 0000       | 4
+any        | 1          | 0001       | 4
+algorithm  | 1          | 0010       | 4
+worst      | 1          | 0011       | 4
+being      | 1          | 0100       | 4
+for        | 1          | 0101       | 4
+a          | 1          | 0110       | 4
+this       | 1          | 0111       | 4
+no         | 1          | 1000       | 4
+where      | 1          | 1001       | 4
+word       | 1          | 1010       | 4
+used       | 1          | 1011       | 4
+ones       | 1          | 11000      | 5
+only       | 1          | 11001      | 5
+coding     | 1          | 11010      | 5
+its        | 1          | 11011      | 5
+case       | 1          | 11100      | 5
+is         | 1          | 11101      | 5
+example    | 1          | 11110      | 5
+repeated,  | 1          | 11111      | 5
+
+============================================================
+Original size (bits): 320
+Compressed size (bits): 88
+Compression ratio: 72.50%
+Unique symbols: 20
+Most frequent symbol: 'this' (1 times)
+Least frequent symbol: 'this' (1 times)

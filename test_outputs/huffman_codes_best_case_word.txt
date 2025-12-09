@@ -1,0 +1,17 @@
+Huffman Encoding Report (Word-Level)
+Original Text Length: 20 tokens
+Symbol Table:
+Symbol | Frequency | Huffman Code | Bits Used
+============================================================
+are        | 5          | 00         | 10
+hello      | 5          | 01         | 10
+you        | 5          | 10         | 10
+how        | 5          | 11         | 10
+
+============================================================
+Original size (bits): 320
+Compressed size (bits): 40
+Compression ratio: 87.50%
+Unique symbols: 4
+Most frequent symbol: 'hello' (5 times)
+Least frequent symbol: 'hello' (5 times)
