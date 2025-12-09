@@ -12,6 +12,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(CURRENT_DIR)
 RES_DIR = os.path.join(BASE_DIR, "results")
 DATA_DIR = os.path.join(BASE_DIR, "data")
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 
 class Node:
     """Node in the Huffman tree"""
@@ -337,7 +338,10 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Construct full path: CURRENT_DIR/data/<file>
-    file_path = os.path.join(DATA_DIR, input_filename)
+    if operation == "compress":
+        file_path = os.path.join(DATA_DIR, input_filename)
+    elif operation == "decompress":
+        file_path = os.path.join(OUTPUT_DIR, input_filename)
 
     if not os.path.exists(file_path):
         print(f"Error: File '{file_path}' not found.")
