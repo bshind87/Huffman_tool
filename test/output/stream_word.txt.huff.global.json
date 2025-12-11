@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "mode": "word",
+  "total_tokens": 22,
+  "unique_symbols": 13,
+  "freq": {
+    "Huffman": 1,
+    " ": 10,
+    "coding": 1,
+    "compresses": 1,
+    "text": 1,
+    "by": 1,
+    "assigning": 1,
+    "shorter": 1,
+    "codes": 1,
+    "to": 1,
+    "common": 1,
+    "words": 1,
+    ".": 1
+  }
+}

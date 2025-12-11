@@ -1,0 +1,1 @@
+Huffman coding compresses text by assigning shorter codes to common words.

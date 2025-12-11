@@ -1,0 +1,24 @@
+Huffman Encoding Report (Word-Level)
+Total Tokens: 22
+Unique Symbols: 13
+================================================================================
+Symbol               | Frequency  | Code                 | Bits Used
+--------------------------------------------------------------------------------
+' '                  | 10         | 0                    | 10
+Huffman              | 1          | 11010                | 5
+coding               | 1          | 11001                | 5
+compresses           | 1          | 11101                | 5
+text                 | 1          | 1011                 | 4
+by                   | 1          | 11011                | 5
+assigning            | 1          | 11000                | 5
+shorter              | 1          | 11100                | 5
+codes                | 1          | 1001                 | 4
+to                   | 1          | 1000                 | 4
+common               | 1          | 1010                 | 4
+words                | 1          | 11110                | 5
+.                    | 1          | 11111                | 5
+
+================================================================================
+Original size (symbol-based bits): 352
+Compressed size (symbol-based bits): 66
+Estimated compression ratio: 81.25%

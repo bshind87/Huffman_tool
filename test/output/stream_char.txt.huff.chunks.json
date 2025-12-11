@@ -1,0 +1,16 @@
+{
+  "version": 3,
+  "mode": "char",
+  "target_chunk_bytes": 250,
+  "chunks": [
+    {
+      "index": 0,
+      "offset": 0,
+      "length": 25,
+      "padding": 6,
+      "tokens": 47
+    }
+  ],
+  "total_chunks": 1,
+  "total_tokens": 47
+}
