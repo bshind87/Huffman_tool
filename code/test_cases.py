@@ -1,79 +1,183 @@
+"""
+Revised Unified Test Suite (All test artifacts go into test_files/)
+Compatible with:
+- Direct HuffmanCoding encode/decode (char/word)
+- Streaming hybrid compressor/decompressor (v3)
+"""
+
 import os
-from huffman_tool import HuffmanCoding
+import json
+from collections import Counter
 
-# Create output directory
-OUTPUT_DIR = "test_outputs"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+# Import from your real tool
+from huffman_tool import (
+    HuffmanCoding,
+    compress_file_streaming_hybrid,
+    decompress_file_streaming_hybrid,
+    tokenize_text,
+)
 
-# Sample test cases for different data distributions
-texts = {
-    "best_case": "aaaaaaaaaaaaaaaabbbbbbbbccccccdddddd",
-    "average_case": "Huffman coding is a data compression algorithm. It assigns shorter codes to more frequent characters.",
-    "worst_case": "abcdefghiJKLMNO123456789!@#$%^&"
+# =============================================================================
+# DIRECTORIES (NEW)
+# =============================================================================
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(CURRENT_DIR)
+TEST_DIR = os.path.join(BASE_DIR, "test")
+os.makedirs(TEST_DIR, exist_ok=True)
+TEST_INPUT_DIR = os.path.join(TEST_DIR, "input")
+TEST_OUTPUT_DIR = os.path.join(TEST_DIR, "output")
+TEST_TREE_DIR = os.path.join(TEST_DIR, "trees")
+
+os.makedirs(TEST_INPUT_DIR, exist_ok=True)
+os.makedirs(TEST_OUTPUT_DIR, exist_ok=True)
+os.makedirs(TEST_TREE_DIR, exist_ok=True)
+
+# =============================================================================
+# SAMPLE TEST CASES
+# =============================================================================
+DIRECT_TESTS = {
+    "best_case":   "aaaaaaaaaaaaaaaabbbbbbbbccccccdddddd",
+    "average_case": "Huffman coding is a data compression algorithm.",
+    "worst_case":   "abcdefghiJKLMNO123456789!@#$%^&"
 }
 
-# Modes to test — character-level and word-level
-modes = ["char", "word"]
-
-for mode in modes:
-    if mode == 'word':
-        texts = {
-                    "best_case": "hello how are you hello how are you hello how are you hello how are you hello how are you",
-                    "average_case": "Huffman coding is a data compression algorithm. Huffman coding assigns shorter codes to more frequent data.",
-                    "worst_case": "this is a worst case example for huffman coding algorithm where no any word being repeated, its used only ones"
+WORD_TESTS = {
+    "best_case":    "hello hello hello world world test test test",
+    "average_case": "Huffman coding compresses text by assigning shorter codes to common words.",
+    "worst_case":   "each word here is completely unique in this example"
 }
-    print(f"\n{'#' * 80}")
-    print(f"RUNNING TESTS IN {mode.upper()}-LEVEL MODE")
-    print(f"{'#' * 80}\n")
 
-    for label, text in texts.items():
-        print("\n" + "=" * 70)
-        print(f"TEST CASE: {label.replace('_', ' ').title()}")
-        print("=" * 70)
+# =============================================================================
+# HELPERS
+# =============================================================================
 
+def write_test_file(filename, text):
+    """Writes file under test_files/input/"""
+    path = os.path.join(TEST_INPUT_DIR, filename)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
+    return path
+
+
+def visualize_tree(freq_table, prefix):
+    """Visualize Huffman tree under test_files/output/trees/"""
+    hc = HuffmanCoding()
+    root = hc.build_huffman_tree(freq_table)
+    save_path = os.path.join(TEST_TREE_DIR, f"{prefix}.png")
+    hc.visualize_tree(root, save_path)
+    return save_path
+
+
+# =============================================================================
+# PART 1 — DIRECT TESTS
+# =============================================================================
+def run_direct_tests():
+    print("\n" + "=" * 80)
+    print("DIRECT (In-Memory) HUFFMAN TESTS — CHAR MODE")
+    print("=" * 80)
+
+    for name, text in DIRECT_TESTS.items():
+        print(f"\n--- CHAR TEST: {name} ---")
         hc = HuffmanCoding()
 
-        # Define output files
-        code_file = os.path.join(OUTPUT_DIR, f"huffman_codes_{label}_{mode}.txt")
-        tree_file = os.path.join(OUTPUT_DIR, f"huffman_tree_{label}_{mode}.png")
+        # Build freq + tree manually
+        tokens = tokenize_text(text, mode="char")
+        freq_table = Counter(tokens)
+        root = hc.build_huffman_tree(freq_table)
+        hc.generate_codes(root)
+        
+        # Encode
+        encoded = "".join(hc.codes[t] for t in tokens)
+        
+        # Decode using tree
+        decoded = hc.decode_with_tree(encoded, mode="char")
 
-        # Encode text
-        encoded, freq_table = hc.encode(text, code_output_path=code_file, mode=mode)
-        ratio = hc.calculate_compression_ratio(
-            original_size_bits=len(text) * (8 if mode == "char" else 16),
-            compressed_size_bits=len(encoded)
-        )
+        print(f"Encoded bits: {len(encoded)}")
+        print(f"Decoded OK: {decoded == text}")
 
-        # Summary
-        if mode == 'word':
-            print(f"Original text length: {len(text.split())} symbols")
-        else:
-            print(f"Original text length: {len(text)} symbols")
-        print(f"Original size: {len(text) * (8 if mode == 'char' else 16)} bits")
-        print(f"Encoded size: {len(encoded)} bits")
-        print(f"Compression ratio: {ratio:.2f}%")
+        visualize_tree(freq_table, f"tree_char_{name}")
 
-        print("\nSymbol Frequencies:")
-        for sym, freq in sorted(freq_table.items()):
-            repr_sym = sym if sym not in ['\n', '\t', ' '] else repr(sym)
-            print(f"  {repr_sym} : {freq}")
+    print("\n" + "=" * 80)
+    print("DIRECT (In-Memory) HUFFMAN TESTS — WORD MODE")
+    print("=" * 80)
 
-        print("\nHuffman Codes:")
-        for sym, code in sorted(hc.codes.items()):
-            repr_sym = sym if sym not in ['\n', '\t', ' '] else repr(sym)
-            print(f"  {repr_sym} : {code}")
+    for name, text in WORD_TESTS.items():
+        print(f"\n--- WORD TEST: {name} ---")
+        hc = HuffmanCoding()
 
-        # Decode and verify correctness
-        decoded = hc.decode(encoded, freq_table, mode=mode)
-        print(f"\nDecoding successful: {decoded == text}")
+        tokens = tokenize_text(text, mode="word")
+        freq_table = Counter(tokens)
 
-        # Visualize Huffman tree (Graphviz)
-        try:
-            hc.visualize_tree(hc.root, filename=tree_file)
-            print(f"[INFO] Huffman tree saved to {tree_file}")
-        except Exception as e:
-            print(f"[WARNING] Tree visualization skipped: {e}")
+        root = hc.build_huffman_tree(freq_table)
+        hc.generate_codes(root)
+        
+        # Encode
+        encoded = "".join(hc.codes[t] for t in tokens)
+        
+        # Decode using tree
+        decoded = hc.decode_with_tree(encoded, mode="word")
 
-        print(f"[INFO] Codes saved to: {code_file}")
+        print(f"Encoded bits: {len(encoded)}")
+        print(f"Decoded OK: {decoded == text}")
 
-print("\nAll Huffman test cases completed successfully!")
+        visualize_tree(freq_table, f"tree_word_{name}")
+
+
+# =============================================================================
+# PART 2 — HYBRID STREAMING COMPRESSOR TESTS
+# =============================================================================
+def run_streaming_tests():
+    print("\n" + "=" * 80)
+    print("STREAMING HYBRID CHUNKED TESTS")
+    print("=" * 80)
+
+    # Prepare test text files
+    char_file = write_test_file("stream_char.txt", DIRECT_TESTS["average_case"])
+    word_file = write_test_file("stream_word.txt", WORD_TESTS["average_case"])
+
+    tests = [
+        ("stream_char.txt", char_file, "char"),
+        ("stream_word.txt", word_file, "word"),
+    ]
+
+    for fname, path, mode in tests:
+        print(f"\n--- STREAM TEST: {fname} (mode={mode}) ---")
+
+        # COMPRESS
+        compress_file_streaming_hybrid(path, mode=mode, target_chunk_bytes=250)
+
+        huff_path = os.path.join("output", fname + ".huff")  # tool always writes here
+        global_json = huff_path + ".global.json"
+        chunk_json = huff_path + ".chunks.json"
+
+        print(f"[INFO] huff file: {huff_path}")
+        print(f"[INFO] global meta: {global_json}")
+        print(f"[INFO] chunk meta: {chunk_json}")
+
+        # Validate metadata
+        if not os.path.exists(huff_path):
+            print("[ERROR] Missing .huff output!")
+            continue
+        if not os.path.exists(global_json) or not os.path.exists(chunk_json):
+            print("[ERROR] Missing metadata!")
+            continue
+
+        # DECOMPRESS
+        output_path = decompress_file_streaming_hybrid(huff_path)
+
+        with open(output_path, "r", encoding="utf-8") as f:
+            decompressed = f.read()
+
+        with open(path, "r", encoding="utf-8") as f:
+            original = f.read()
+
+        print(f"[SUCCESS] Round-trip OK: {decompressed == original}")
+
+
+# =============================================================================
+# MAIN
+# =============================================================================
+if __name__ == "__main__":
+    run_direct_tests()
+    run_streaming_tests()
+    print("\nAll tests completed.")
