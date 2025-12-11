@@ -1,0 +1,37 @@
+{
+  "version": 3,
+  "mode": "word",
+  "target_chunk_bytes": 524288,
+  "chunks": [
+    {
+      "index": 0,
+      "offset": 0,
+      "length": 524293,
+      "padding": 4,
+      "tokens": 637924
+    },
+    {
+      "index": 1,
+      "offset": 524293,
+      "length": 524289,
+      "padding": 7,
+      "tokens": 631542
+    },
+    {
+      "index": 2,
+      "offset": 1048582,
+      "length": 524297,
+      "padding": 0,
+      "tokens": 635006
+    },
+    {
+      "index": 3,
+      "offset": 1572879,
+      "length": 321073,
+      "padding": 4,
+      "tokens": 387336
+    }
+  ],
+  "total_chunks": 4,
+  "total_tokens": 2291808
+}
